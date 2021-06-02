@@ -273,117 +273,116 @@ absl::Status LandmarksToRenderDataCalculator::Process(CalculatorContext* cc) {
   }
 
   auto render_data = absl::make_unique<RenderData>();
-  bool visualize_depth = options_.visualize_landmark_depth();
-  float z_min = 0.f;
-  float z_max = 0.f;
+  // bool visualize_depth = options_.visualize_landmark_depth();
+  // float z_min = 0.f;
+  // float z_max = 0.f;
 
-  const Color min_depth_line_color = options_.has_min_depth_line_color()
-                                         ? options_.min_depth_line_color()
-                                         : DefaultMinDepthLineColor();
-  const Color max_depth_line_color = options_.has_max_depth_line_color()
-                                         ? options_.max_depth_line_color()
-                                         : DefaultMaxDepthLineColor();
+  // const Color min_depth_line_color = options_.has_min_depth_line_color()
+  //                                        ? options_.min_depth_line_color()
+  //                                        : DefaultMinDepthLineColor();
+  // const Color max_depth_line_color = options_.has_max_depth_line_color()
+  //                                        ? options_.max_depth_line_color()
+  //                                        : DefaultMaxDepthLineColor();
 
-  // Apply scale to `thickness` of rendered landmarks and connections to make
-  // them bigger when object (e.g. pose, hand or face) is closer/bigger and
-  // snaller when object is further/smaller.
-  float thickness = options_.thickness();
-  if (cc->Inputs().HasTag(kRenderScaleTag)) {
-    const float render_scale = cc->Inputs().Tag(kRenderScaleTag).Get<float>();
-    thickness *= render_scale;
-  }
+  // // Apply scale to `thickness` of rendered landmarks and connections to make
+  // // them bigger when object (e.g. pose, hand or face) is closer/bigger and
+  // // snaller when object is further/smaller.
+  // float thickness = options_.thickness();
+  // if (cc->Inputs().HasTag(kRenderScaleTag)) {
+  //   const float render_scale = cc->Inputs().Tag(kRenderScaleTag).Get<float>();
+  //   thickness *= render_scale;
+  // }
 
-  if (cc->Inputs().HasTag(kLandmarksTag)) {
-    const LandmarkList& landmarks =
-        cc->Inputs().Tag(kLandmarksTag).Get<LandmarkList>();
-    if (visualize_depth) {
-      GetMinMaxZ<LandmarkList, Landmark>(landmarks, &z_min, &z_max);
-    }
-    // Only change rendering if there are actually z values other than 0.
-    visualize_depth &= ((z_max - z_min) > 1e-3);
-    if (visualize_depth) {
-      AddConnectionsWithDepth<LandmarkList, Landmark>(
-          landmarks, landmark_connections_, options_.utilize_visibility(),
-          options_.visibility_threshold(), options_.utilize_presence(),
-          options_.presence_threshold(), thickness, /*normalized=*/false, z_min,
-          z_max, min_depth_line_color, max_depth_line_color, render_data.get());
-    } else {
-      AddConnections<LandmarkList, Landmark>(
-          landmarks, landmark_connections_, options_.utilize_visibility(),
-          options_.visibility_threshold(), options_.utilize_presence(),
-          options_.presence_threshold(), options_.connection_color(), thickness,
-          /*normalized=*/false, render_data.get());
-    }
-    for (int i = 0; i < landmarks.landmark_size(); ++i) {
-      const Landmark& landmark = landmarks.landmark(i);
+  // if (cc->Inputs().HasTag(kLandmarksTag)) {
+  //   const LandmarkList& landmarks =
+  //       cc->Inputs().Tag(kLandmarksTag).Get<LandmarkList>();
+  //   if (visualize_depth) {
+  //     GetMinMaxZ<LandmarkList, Landmark>(landmarks, &z_min, &z_max);
+  //   }
+  //   // Only change rendering if there are actually z values other than 0.
+  //   visualize_depth &= ((z_max - z_min) > 1e-3);
+  //   if (visualize_depth) {
+  //     AddConnectionsWithDepth<LandmarkList, Landmark>(
+  //         landmarks, landmark_connections_, options_.utilize_visibility(),
+  //         options_.visibility_threshold(), options_.utilize_presence(),
+  //         options_.presence_threshold(), thickness, /*normalized=*/false, z_min,
+  //         z_max, min_depth_line_color, max_depth_line_color, render_data.get());
+  //   } else {
+  //     AddConnections<LandmarkList, Landmark>(
+  //         landmarks, landmark_connections_, options_.utilize_visibility(),
+  //         options_.visibility_threshold(), options_.utilize_presence(),
+  //         options_.presence_threshold(), options_.connection_color(), thickness,
+  //         /*normalized=*/false, render_data.get());
+  //   }
+  //   for (int i = 0; i < landmarks.landmark_size(); ++i) {
+  //     const Landmark& landmark = landmarks.landmark(i);
 
-      if (!IsLandmarkVisibileAndPresent<Landmark>(
-              landmark, options_.utilize_visibility(),
-              options_.visibility_threshold(), options_.utilize_presence(),
-              options_.presence_threshold())) {
-        continue;
-      }
+  //     if (!IsLandmarkVisibileAndPresent<Landmark>(
+  //             landmark, options_.utilize_visibility(),
+  //             options_.visibility_threshold(), options_.utilize_presence(),
+  //             options_.presence_threshold())) {
+  //       continue;
+  //     }
 
-      auto* landmark_data_render = AddPointRenderData(
-          options_.landmark_color(), thickness, render_data.get());
-      if (visualize_depth) {
-        SetColorSizeValueFromZ(landmark.z(), z_min, z_max, landmark_data_render,
-                               options_.min_depth_circle_thickness(),
-                               options_.max_depth_circle_thickness());
-      }
-      auto* landmark_data = landmark_data_render->mutable_point();
-      landmark_data->set_normalized(false);
-      landmark_data->set_x(landmark.x());
-      landmark_data->set_y(landmark.y());
-    }
-  }
+  //     auto* landmark_data_render = AddPointRenderData(
+  //         options_.landmark_color(), thickness, render_data.get());
+  //     if (visualize_depth) {
+  //       SetColorSizeValueFromZ(landmark.z(), z_min, z_max, landmark_data_render,
+  //                              options_.min_depth_circle_thickness(),
+  //                              options_.max_depth_circle_thickness());
+  //     }
+  //     auto* landmark_data = landmark_data_render->mutable_point();
+  //     landmark_data->set_normalized(false);
+  //     landmark_data->set_x(landmark.x());
+  //     landmark_data->set_y(landmark.y());
+  //   }
+  // }
 
-  if (cc->Inputs().HasTag(kNormLandmarksTag)) {
-    const NormalizedLandmarkList& landmarks =
-        cc->Inputs().Tag(kNormLandmarksTag).Get<NormalizedLandmarkList>();
-    if (visualize_depth) {
-      GetMinMaxZ<NormalizedLandmarkList, NormalizedLandmark>(landmarks, &z_min,
-                                                             &z_max);
-    }
-    // Only change rendering if there are actually z values other than 0.
-    visualize_depth &= ((z_max - z_min) > 1e-3);
-    if (visualize_depth) {
-      AddConnectionsWithDepth<NormalizedLandmarkList, NormalizedLandmark>(
-          landmarks, landmark_connections_, options_.utilize_visibility(),
-          options_.visibility_threshold(), options_.utilize_presence(),
-          options_.presence_threshold(), thickness, /*normalized=*/true, z_min,
-          z_max, min_depth_line_color, max_depth_line_color, render_data.get());
-    } else {
-      AddConnections<NormalizedLandmarkList, NormalizedLandmark>(
-          landmarks, landmark_connections_, options_.utilize_visibility(),
-          options_.visibility_threshold(), options_.utilize_presence(),
-          options_.presence_threshold(), options_.connection_color(), thickness,
-          /*normalized=*/true, render_data.get());
-    }
-    for (int i = 0; i < landmarks.landmark_size(); ++i) {
-      const NormalizedLandmark& landmark = landmarks.landmark(i);
+  // if (cc->Inputs().HasTag(kNormLandmarksTag)) {
+  //   const NormalizedLandmarkList& landmarks =
+  //       cc->Inputs().Tag(kNormLandmarksTag).Get<NormalizedLandmarkList>();
+  //   if (visualize_depth) {
+  //     GetMinMaxZ<NormalizedLandmarkList, NormalizedLandmark>(landmarks, &z_min,
+  //                                                            &z_max);
+  //   }
+  //   // Only change rendering if there are actually z values other than 0.
+  //   visualize_depth &= ((z_max - z_min) > 1e-3);
+  //   if (visualize_depth) {
+  //     AddConnectionsWithDepth<NormalizedLandmarkList, NormalizedLandmark>(
+  //         landmarks, landmark_connections_, options_.utilize_visibility(),
+  //         options_.visibility_threshold(), options_.utilize_presence(),
+  //         options_.presence_threshold(), thickness, /*normalized=*/true, z_min,
+  //         z_max, min_depth_line_color, max_depth_line_color, render_data.get());
+  //   } else {
+  //     AddConnections<NormalizedLandmarkList, NormalizedLandmark>(
+  //         landmarks, landmark_connections_, options_.utilize_visibility(),
+  //         options_.visibility_threshold(), options_.utilize_presence(),
+  //         options_.presence_threshold(), options_.connection_color(), thickness,
+  //         /*normalized=*/true, render_data.get());
+  //   }
+  //   for (int i = 0; i < landmarks.landmark_size(); ++i) {
+  //     const NormalizedLandmark& landmark = landmarks.landmark(i);
 
-      if (!IsLandmarkVisibileAndPresent<NormalizedLandmark>(
-              landmark, options_.utilize_visibility(),
-              options_.visibility_threshold(), options_.utilize_presence(),
-              options_.presence_threshold())) {
-        continue;
-      }
+  //     if (!IsLandmarkVisibileAndPresent<NormalizedLandmark>(
+  //             landmark, options_.utilize_visibility(),
+  //             options_.visibility_threshold(), options_.utilize_presence(),
+  //             options_.presence_threshold())) {
+  //       continue;
+  //     }
 
-      auto* landmark_data_render = AddPointRenderData(
-          options_.landmark_color(), thickness, render_data.get());
-      if (visualize_depth) {
-        SetColorSizeValueFromZ(landmark.z(), z_min, z_max, landmark_data_render,
-                               options_.min_depth_circle_thickness(),
-                               options_.max_depth_circle_thickness());
-      }
-      auto* landmark_data = landmark_data_render->mutable_point();
-      landmark_data->set_normalized(true);
-      landmark_data->set_x(landmark.x());
-      landmark_data->set_y(landmark.y());
-    }
-  }
-
+  //     auto* landmark_data_render = AddPointRenderData(
+  //         options_.landmark_color(), thickness, render_data.get());
+  //     if (visualize_depth) {
+  //       SetColorSizeValueFromZ(landmark.z(), z_min, z_max, landmark_data_render,
+  //                              options_.min_depth_circle_thickness(),
+  //                              options_.max_depth_circle_thickness());
+  //     }
+  //     auto* landmark_data = landmark_data_render->mutable_point();
+  //     landmark_data->set_normalized(true);
+  //     landmark_data->set_x(landmark.x());
+  //     landmark_data->set_y(landmark.y());
+  //   }
+  // }
   cc->Outputs()
       .Tag(kRenderDataTag)
       .Add(render_data.release(), cc->InputTimestamp());

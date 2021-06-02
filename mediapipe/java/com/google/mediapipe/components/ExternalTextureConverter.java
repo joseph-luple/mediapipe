@@ -266,6 +266,7 @@ public class ExternalTextureConverter implements TextureFrameProducer {
     }
 
     public void setSurfaceTexture(SurfaceTexture texture, int width, int height) {
+      Log.d("[JM]", "setSurfaceTexture");
       if (surfaceTexture != null) {
         surfaceTexture.setOnFrameAvailableListener(null);
       }
@@ -306,6 +307,7 @@ public class ExternalTextureConverter implements TextureFrameProducer {
 
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+      Log.d("[JM]", "onFrameAvailable");
       handler.post(() -> renderNext(surfaceTexture));
     }
 

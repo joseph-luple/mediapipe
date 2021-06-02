@@ -21,13 +21,8 @@
 
 set -e
 
-if [ "$(uname)" == "Darwin" ]; then
-  platform="darwin"
-  platform_android_sdk="mac"
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-  platform="linux"
-  platform_android_sdk="linux"
-fi
+platform="linux"
+platform_android_sdk="linux"
 
 if [[ $ANDROID_HOME ]] && [[ $ANDROID_NDK_HOME ]]
 then
@@ -64,7 +59,7 @@ then
 else
   rm -rf /tmp/android_sdk/
   mkdir  /tmp/android_sdk/
-  curl https://dl.google.com/android/repository/commandlinetools-${platform_android_sdk}-6609375_latest.zip -o /tmp/android_sdk/commandline_tools.zip
+  curl https://dl.google.com/android/repository/commandlinetools-${platform_android_sdk}-7302050_latest.zip -o /tmp/android_sdk/commandline_tools.zip
   unzip /tmp/android_sdk/commandline_tools.zip -d /tmp/android_sdk/
   mkdir -p $android_sdk_path
   /tmp/android_sdk/tools/bin/sdkmanager --update --sdk_root=${android_sdk_path}
@@ -94,14 +89,16 @@ ndk_path_line=$((ndk_block+2))'i'
 sdk_block=$(grep -n 'android_sdk_repository(' $workspace_file | awk -F  ":" '{print $1}')
 sdk_path_line=$((sdk_block+3))'i'
 
-if [ $platform == "darwin" ]; then
+if [ $platform == "darwin" ]
+then
   sed -i -e "$ndk_path_line\\
   \ \ \ \ path = \"${android_ndk_path}/android-ndk-${ndk_version}\",
   " $workspace_file
   sed -i -e "$sdk_path_line\\
   \ \ \ \ path = \"${android_sdk_path}\",
   " $workspace_file
-elif [ $platform == "linux" ]; then
+elif [ $platform == "linux" ]
+then
   sed -i "$ndk_path_line \    path = \"${android_ndk_path}/android-ndk-${ndk_version}\"," $workspace_file
   sed -i "$sdk_path_line \    path = \"${android_sdk_path}\"," $workspace_file
 fi

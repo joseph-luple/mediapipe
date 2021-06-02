@@ -188,7 +188,7 @@ public class CameraXPreviewHelper extends CameraHelper {
     Executor mainThreadExecutor = ContextCompat.getMainExecutor(context);
     ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
         ProcessCameraProvider.getInstance(context);
-
+    Log.d("[JM]", "startCamera");
     targetSize = (targetSize == null ? TARGET_SIZE : targetSize);
     // According to CameraX documentation
     // (https://developer.android.com/training/camerax/configuration#specify-resolution):

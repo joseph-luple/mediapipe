@@ -180,10 +180,10 @@ absl::Status IrisToRenderDataCalculator::Process(CalculatorContext* cc) {
 
   const auto left_iris_size = CalculateIrisDiameter(*left_iris, image_size);
   const auto right_iris_size = CalculateIrisDiameter(*right_iris, image_size);
-  RenderIris(*left_iris, options, image_size, left_iris_size,
-             render_data.get());
-  RenderIris(*right_iris, options, image_size, right_iris_size,
-             render_data.get());
+  // RenderIris(*left_iris, options, image_size, left_iris_size,
+  //            render_data.get());
+  // RenderIris(*right_iris, options, image_size, right_iris_size,
+  //            render_data.get());
 
   std::vector<std::string> lines;
   std::string line;
@@ -207,7 +207,7 @@ absl::Status IrisToRenderDataCalculator::Process(CalculatorContext* cc) {
       lines.emplace_back(line);
     }
   }
-  AddTextRenderData(options, image_size, lines, render_data.get());
+  // AddTextRenderData(options, image_size, lines, render_data.get());
 
   cc->Outputs()
       .Tag(kRenderDataTag)

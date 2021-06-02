@@ -9,6 +9,9 @@ input_stream: "input_video"
 output_stream: "output_video"
 # Face landmarks with iris. (NormalizedLandmarkList)
 output_stream: "face_landmarks_with_iris"
+output_stream: "left_iris_depth_mm"
+output_stream: "right_iris_depth_mm"
+
 
 # Throttles the images flowing downstream for flow control. It passes through
 # the very first incoming image unaltered, and waits for downstream nodes
@@ -153,6 +156,8 @@ node {
   input_side_packet: "FOCAL_LENGTH:focal_length_pixel"
   output_stream: "IRIS_LANDMARKS:iris_landmarks"
   output_stream: "IMAGE:output_video"
+  output_stream: "LEFT_IRIS_DEPTH:left_iris_depth_mm"
+  output_stream: "RIGHT_IRIS_DEPTH:right_iris_depth_mm"
 }
 
 node {

@@ -169,23 +169,23 @@ absl::Status DetectionsToRenderDataCalculator::Process(CalculatorContext* cc) {
   // TODO: Add score threshold to
   // DetectionsToRenderDataCalculatorOptions.
   auto render_data = absl::make_unique<RenderData>();
-  render_data->set_scene_class(options.scene_class());
-  if (has_detection_from_list) {
-    for (const auto& detection :
-         cc->Inputs().Tag(kDetectionListTag).Get<DetectionList>().detection()) {
-      AddDetectionToRenderData(detection, options, render_data.get());
-    }
-  }
-  if (has_detection_from_vector) {
-    for (const auto& detection :
-         cc->Inputs().Tag(kDetectionsTag).Get<std::vector<Detection>>()) {
-      AddDetectionToRenderData(detection, options, render_data.get());
-    }
-  }
-  if (has_single_detection) {
-    AddDetectionToRenderData(cc->Inputs().Tag(kDetectionTag).Get<Detection>(),
-                             options, render_data.get());
-  }
+  // render_data->set_scene_class(options.scene_class());
+  // if (has_detection_from_list) {
+  //   for (const auto& detection :
+  //        cc->Inputs().Tag(kDetectionListTag).Get<DetectionList>().detection()) {
+  //     AddDetectionToRenderData(detection, options, render_data.get());
+  //   }
+  // }
+  // if (has_detection_from_vector) {
+  //   for (const auto& detection :
+  //        cc->Inputs().Tag(kDetectionsTag).Get<std::vector<Detection>>()) {
+  //     AddDetectionToRenderData(detection, options, render_data.get());
+  //   }
+  // }
+  // if (has_single_detection) {
+  //   AddDetectionToRenderData(cc->Inputs().Tag(kDetectionTag).Get<Detection>(),
+  //                            options, render_data.get());
+  // }
   cc->Outputs()
       .Tag(kRenderDataTag)
       .Add(render_data.release(), cc->InputTimestamp());

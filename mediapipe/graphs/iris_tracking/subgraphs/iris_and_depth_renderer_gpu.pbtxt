@@ -15,6 +15,8 @@ input_stream: "RIGHT_EYE_RECT:right_eye_rect_from_landmarks"
 input_side_packet: "FOCAL_LENGTH:focal_length_pixel"
 output_stream: "IRIS_LANDMARKS:iris_landmarks"
 output_stream: "IMAGE:output_image"
+output_stream: "LEFT_IRIS_DEPTH:left_iris_depth_mm"
+output_stream: "RIGHT_IRIS_DEPTH:right_iris_depth_mm"
 
 node {
   calculator: "SplitNormalizedLandmarkListCalculator"
